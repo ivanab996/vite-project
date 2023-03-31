@@ -10,6 +10,6 @@ Node v14.16.0
 ## Features
 
 - [ ] Adda todo item
-- [ ] List todo item
+- [x] List todo item
 - [ ] Remove todo item
-- [ ] Mark todo item
+- [x] Mark todo item
