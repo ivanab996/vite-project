@@ -9,7 +9,9 @@ Node v14.16.0
 
 ## Features
 
-- [ ] Adda todo item
+- [x] Add a todo item
 - [x] List todo item
-- [ ] Remove todo item
+- [x] Remove todo item
 - [x] Mark todo item
+- [x] Sort by date
+- [ ] Filter by name
