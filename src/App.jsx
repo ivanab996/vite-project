@@ -1,90 +1,62 @@
 import { useState } from 'react'
-
+import { TodoItem } from './components/TodoItem';
+import { ToDoItemForm } from './components/ToDoItemForm';
 
 
 function App() {
   const [items, setItems] = useState([]);
-  const [ formState, setFormState ] = useState({
-    text: '',
-  });
+  const [sort, setSort] = useState ("createdAtDesc");
 
-  const [ sort, setSort ] = useState("createdAtDesc");
-
-  const handleSortChnage = (event) => {
-    setSort(event.target.value);
+  const handleSortChange = (event) => {
+    setSort (event.target.value);
   }
 
- const handleChange = (event) => {
-   setFormState({ ...formState, [event.target.name]: event.target.value});
- }
+  const handleCreateItem = (item)=>{
+    setItems([...items, item]);
+  }
 
- const handleSubmit = (event) => {
-   event.preventDefault();
-   setItems([
-     ...items,
-     {
-       id: Date.now(),
-       text: formState.text,
-       done: false,
-       createdAt: Date.now(),
-     }
-   ]);
-   setFormState({...formState, text: ''});
- }
+  const handleClearItems = () => {
+      setItems([]);
+  }
 
-  const itemComponents = items.sort((a, b) => {
-    if (sort === "createdAtAsc") {
-      return a.createdAt - b.createdAt;
-    }
-
-    return b.createdAt - a.createdAt;
-  })
-  .map(item => {
-    const handleChange = () => {
+  const handleMarkItemAsDone= (id, done) => {
       setItems(items.map(newItem => {
-        if (newItem.id === item.id) {
-          return { ...newItem, done: !item.done };
-        }
-        return newItem;
-      }))
-    };
-
-    const handleClick = () => {
-      setItems(items.filter(newItem => {
-        return newItem.id !==item.id;
-      }));
-    }
-
-
-    console.log(sort);
-
-    console.log(items.sort((a, b) => {
-      if (sort === "createdAtAsc") {
-        return a.createdAt - b.createdAt;
+       if (newItem.id === id){
+        return {...newItem, done: !done };
       }
-
-      return b.createdAt - a.createdAt;
+      return newItem;
     }));
+  }
 
-    return (
-      <div key={item.id}>
-        <input type="checkbox" checked={item.done} onChange={handleChange} />{item.text} ({new Date(item.createdAt).toUTCString()})
-        <button onClick={handleClick}>X</button>
-      </div>
-    );
-  });
+  const handleDeleteItem = (id) => {
+    setItems(items.filter(newItem=> {
+      return newItem.id !== id;
+    }));
+  };
 
+  const itemComponents = items
+    .sort((a,b) => {
+      if (sort=== "createdAtAsc") {
+      return a.createdAt - b.createdAt;
+      }
+      return b.createdAt - a.createdAt;
+    })
+    .map(item=> {
+      return <TodoItem key={item.id} id={item.id} done={item.done} 
+      text={item.text} createdAt={item.createdAt} 
+      onDeleteItem={handleDeleteItem} onMarkItemAsDone={handleMarkItemAsDone}
+      />
+    });
+  
   return (
-    <div className="App">
-      <h1>To do app</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name='text' value={formState.text} onChange={handleChange}/>
-        <button type="submit">ADD</button>
-      </form>
-      <select onChange={handleSortChnage} defaultValue={sort}>
+    <div>
+      <h1>TODO APP</h1>
+      <ToDoItemForm onCreateItem={handleCreateItem} />
+      <select onChange={handleSortChange} defaultValue={sort}>
         <option value="createdAtAsc">Created at: Ascending</option>
         <option value="createdAtDesc">Created at: Descending</option>
       </select>
+      <button onClick={handleClearItems}>Clear all</button>
       {itemComponents}
     </div>
   )
